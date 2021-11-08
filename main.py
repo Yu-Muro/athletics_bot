@@ -80,7 +80,7 @@ def get_pgc():
 
 def send_message():
     title, link = get_pgc()
-    line_bot_api.broadcast("{}\n{}".format(title, url + link))
+    line_bot_api.broadcast("{}\n{}".format(str(title), url + link))
 
 # ポート番号の設定
 if __name__ == "__main__":
