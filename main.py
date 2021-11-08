@@ -73,14 +73,15 @@ def get_pgc():
     titles = soup.find_all(class_="articleCard-title")
     links = soup.find_all(class_="articleList-item")
     link = links[0].a["href"]
-    print(links[0].a["href"]) #PGCリンク
-    print(titles[0].text) # PGCタイトル
+    # print(links[0].a["href"]) #PGCリンク
+    # print(titles[0].text) # PGCタイトル
     return titles[0].text, link
 
 
 def send_message():
     title, link = get_pgc()
-    line_bot_api.broadcast("{}\n{}".format(str(title), url + link))
+    line_bot_api.broadcast(TextSendMessage(text="{}\n{}".format(str(title), url + link)))
+    print("{}\n{}".format(title, url + link))
 
 # ポート番号の設定
 if __name__ == "__main__":
