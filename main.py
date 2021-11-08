@@ -27,7 +27,6 @@ handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 class PGC(Base):
     __tablename__ = "pgc"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(200))
     url = Column(String(200))
 
 
@@ -82,6 +81,9 @@ def send_message():
     title, link = get_pgc()
     title.replace(" ", "")
     line_bot_api.broadcast(TextSendMessage(text="{}\n{}".format(str(title), url + link)))
+    pgc_data = PGC(url = link)
+    session.add(pgc_data)
+    session.commit()
     print("{}\n{}".format(title, url + link))
 
 # ポート番号の設定
