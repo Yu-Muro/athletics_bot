@@ -104,7 +104,7 @@ def get_company_name(k):
     soup = BeautifulSoup(html.content, "html.parser")
     temp = soup.select(".detailContent-logo column is-7 is-paddingless")
     print(temp)
-    name = temp.text
+    #name = temp.text
     return None
 
 def add_pgc(x):
