@@ -103,7 +103,7 @@ def send_message():
 def get_company_name(k):
     html = req.get(k)
     soup = BeautifulSoup(html.content, "html.parser")
-    temp = soup.select(".detailContent-box")[0].find('h2')
+    temp = soup.select(".columns is-marginless")[0]
     print(temp)
     #name = temp.text
     return None
