@@ -106,7 +106,9 @@ def add_pgc(x):
 #フォロー時
 @handler.add(FollowEvent)
 def handle_follow(event):
-    id = line_bot_api.get_profile(event.source.user_id).user_id
+    line_bot_api.broadcast(TextSendMessage(
+        text="test"))
+    """id = line_bot_api.get_profile(event.source.user_id).user_id
     for i in range(2, -1, -1):
         title, link = get_pgc(i)
         title = title.replace(" ", "")
@@ -119,7 +121,7 @@ def handle_follow(event):
             line_bot_api.push_message(
                 id,
                 TextSendMessage(text="{}\n{}".format(title, url + link))
-            )
+            )"""
 
 # ポート番号の設定
 if __name__ == "__main__":
