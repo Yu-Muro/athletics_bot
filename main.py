@@ -92,7 +92,6 @@ def send_message():
         else:
             add_pgc(link)
             name = get_company_name(url + link)
-            name = "###"
             line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n{}\n{}\n{}".format(name, title, url + link)))
     else:
         if n == 10:
@@ -104,9 +103,8 @@ def get_company_name(k):
     html = req.get(k)
     soup = BeautifulSoup(html.content, "html.parser")
     temp = soup.find('h2')
-    print(temp)
-    #name = temp.text
-    return None
+    name = temp.text
+    return name
 
 def add_pgc(x):
     pgc_data = PGC(url=x)
