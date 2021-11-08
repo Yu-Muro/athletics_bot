@@ -87,6 +87,7 @@ def send_message():
         title = title.replace(" ", "")
         if link in pgc_link_set:
             n += 1
+            name = get_company_name(url + link)
             continue
         else:
             add_pgc(link)
@@ -102,7 +103,7 @@ def send_message():
 def get_company_name(k):
     html = req.get(k)
     soup = BeautifulSoup(html.content, "html.parser")
-    temp = soup.select(".detailContent-logo column is-7 is-paddingless")
+    temp = soup.select(".detailContent-box")
     print(temp)
     #name = temp.text
     return None
