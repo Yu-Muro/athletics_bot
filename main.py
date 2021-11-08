@@ -80,6 +80,7 @@ def get_pgc():
 
 def send_message():
     title, link = get_pgc()
+    title.replace(" ", "")
     line_bot_api.broadcast(TextSendMessage(text="{}\n{}".format(str(title), url + link)))
     print("{}\n{}".format(title, url + link))
 
