@@ -80,7 +80,7 @@ def send_message():
     title = title.replace(" ", "")
     pgc_list = session.query(PGC.url).all()
     for pgc in pgc_list:
-        if link == pgc:
+        if link == pgc.url:
             line_bot_api.broadcast(TextSendMessage(
                 text="新しいチャレンジはありません"))
             break
