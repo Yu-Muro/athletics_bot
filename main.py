@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from flask import Flask, abort, request
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import (FolloowEvent, MessageEvent, TextMessage,
+from linebot.models import (FollowEvent, MessageEvent, TextMessage,
                             TextSendMessage)
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
