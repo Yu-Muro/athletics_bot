@@ -79,9 +79,11 @@ def send_message():
     title, link = get_pgc()
     title = title.replace(" ", "")
     pgc_list = session.query(PGC.url).all()
-    if link in pgc_list:
-        line_bot_api.broadcast(TextSendMessage(
-            text="新しいチャレンジはありません"))
+    for pgc in pgc_list:
+        if link == pgc:
+            line_bot_api.broadcast(TextSendMessage(
+                text="新しいチャレンジはありません"))
+            break
     else:
         add_pgc(link)
         line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n{}\n{}".format(str(title), url + link)))
