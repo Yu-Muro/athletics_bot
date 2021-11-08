@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 from flask import Flask, abort, request
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import (FolloowEvent, MessageEvent, TextMessage,
+                            TextSendMessage)
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -89,7 +90,7 @@ def send_message():
             continue
         else:
             add_pgc(link)
-            line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n{}\n{}".format(str(title), url + link)))
+            line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n{}\n{}".format(title, url + link)))
     else:
         if n == 10:
             line_bot_api.broadcast(TextSendMessage(
@@ -100,6 +101,24 @@ def add_pgc(x):
     pgc_data = PGC(url=x)
     session.add(pgc_data)
     session.commit()
+
+
+#フォロー時
+@handler.add(FollowEvent)
+def handle_follow(event):
+    for i in range(2, -1, -1):
+        title, link = get_pgc(i)
+        title = title.replace(" ", "")
+        if i == 2:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="こちらが最新のチャレンジになります！\n{}\n{}".format(title, url + link))
+            )
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="{}\n{}".format(title, url + link))
+            )
 
 # ポート番号の設定
 if __name__ == "__main__":
