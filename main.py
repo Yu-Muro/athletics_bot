@@ -42,10 +42,8 @@ session = session_factory()
 
 Base.metadata.create_all(bind=engine)
 
-## 1 ##
+
 #Webhookからのリクエストをチェックします。
-
-
 @app.route("/callback", methods=['POST'])
 def callback():
     # リクエストヘッダーから署名検証のための値を取得します。
@@ -79,12 +77,19 @@ def get_pgc():
 
 def send_message():
     title, link = get_pgc()
-    title.replace(" ", "")
-    line_bot_api.broadcast(TextSendMessage(text="{}\n{}".format(str(title), url + link)))
-    pgc_data = PGC(url = link)
+    title = title.replace(" ", "")
+    pgc_list = session.query(PGC.url).all()
+    if link in pgc_list:
+        line_bot_api.broadcast(TextSendMessage(
+            text="新しいチャレンジはありません"))
+    else:
+        add_pgc(link)
+        line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n{}\n{}".format(str(title), url + link)))
+
+def add_pgc(x):
+    pgc_data = PGC(url=x)
     session.add(pgc_data)
     session.commit()
-    print("{}\n{}".format(title, url + link))
 
 # ポート番号の設定
 if __name__ == "__main__":
