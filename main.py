@@ -64,27 +64,36 @@ def callback():
     return 'OK'
 
 
-def get_pgc():
+def get_pgc(i):
     html = req.get(url)
     soup = BeautifulSoup(html.content, "html.parser")
     titles = soup.find_all(class_="articleCard-title")
     links = soup.find_all(class_="articleList-item")
-    link = links[0].a["href"]
+    link = links[i].a["href"]
     # print(links[0].a["href"]) #PGCリンク
     # print(titles[0].text) # PGCタイトル
-    return titles[0].text, link
+    return titles[i].text, link
 
 
 def send_message():
-    title, link = get_pgc()
-    title = title.replace(" ", "")
     pgc_list = session.query(PGC.url).all()
-    if link == pgc_list[-1].url:
-        line_bot_api.broadcast(TextSendMessage(
-                text="新しいチャレンジはありません"))
+    pgc_link_set = set()
+    for pgc in pgc_list:
+        pgc_link_set.add(pgc.url)
+    n = 0
+    for i in range(9, -1, -1):
+        title, link = get_pgc(i)
+        title = title.replace(" ", "")
+        if link in pgc_link_set:
+            n += 1
+            continue
+        else:
+            add_pgc(link)
+            line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n{}\n{}".format(str(title), url + link)))
     else:
-        add_pgc(link)
-        line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n{}\n{}".format(str(title), url + link)))
+        if n == 10:
+            line_bot_api.broadcast(TextSendMessage(
+                text="新しいチャレンジはありません"))
     return None
 
 def add_pgc(x):
