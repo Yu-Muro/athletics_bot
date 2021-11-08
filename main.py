@@ -104,11 +104,12 @@ def add_pgc(x):
 
 
 #フォロー時
+"""
 @handler.add(FollowEvent)
 def handle_follow(event):
     line_bot_api.broadcast(TextSendMessage(
         text="test"))
-    """id = line_bot_api.get_profile(event.source.user_id).user_id
+    id = line_bot_api.get_profile(event.source.user_id).user_id
     for i in range(2, -1, -1):
         title, link = get_pgc(i)
         title = title.replace(" ", "")
@@ -121,7 +122,18 @@ def handle_follow(event):
             line_bot_api.push_message(
                 id,
                 TextSendMessage(text="{}\n{}".format(title, url + link))
-            )"""
+            )
+"""
+
+
+@handler.add(FollowEvent)  # FollowEventをimportするのを忘れずに！
+def follow_message(event):  # event: LineMessagingAPIで定義されるリクエストボディ
+    # print(event)
+
+    if event.type == "follow":  # フォロー時のみメッセージを送信
+        line_bot_api.reply_message(
+            event.reply_token,  # イベントの応答に用いるトークン
+            TextSendMessage(text="フォローありがとうございます！"))
 
 # ポート番号の設定
 if __name__ == "__main__":
