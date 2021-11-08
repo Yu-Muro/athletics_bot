@@ -105,7 +105,7 @@ def add_pgc(x):
 
 #フォロー時
 @handler.add(FollowEvent)
-def handle_follow():
+def handle_follow(event):
     id = line_bot_api.get_profile(event.source.user_id).user_id
     for i in range(2, -1, -1):
         title, link = get_pgc(i)
