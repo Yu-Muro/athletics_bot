@@ -101,8 +101,7 @@ def send_message():
 def get_company_name(link):
     html = req.get(url)
     soup = BeautifulSoup(html.content, "html.parser")
-    temp = soup.find("div",
-        class_="detailContent-logo column is-7 is-paddingless").find("h2")
+    temp = soup.select(".detailContent-logo column is-7 is-paddingless").find("h2")
     name = temp.text
     return name
 
