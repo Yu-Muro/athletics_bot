@@ -98,8 +98,8 @@ def send_message():
                 text="新しいチャレンジはありません"))
     return None
 
-def get_company_name(link):
-    html = req.get(url)
+def get_company_name(k):
+    html = req.get(k)
     soup = BeautifulSoup(html.content, "html.parser")
     temp = soup.select(".detailContent-logo column is-7 is-paddingless")[0].find_all("h2")
     name = temp.text
