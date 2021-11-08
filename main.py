@@ -106,17 +106,18 @@ def add_pgc(x):
 #フォロー時
 @handler.add(FollowEvent)
 def handle_follow(event):
+    id = line_bot_api.get_profile(event.source.user_id).user_id
     for i in range(2, -1, -1):
         title, link = get_pgc(i)
         title = title.replace(" ", "")
         if i == 2:
-            line_bot_api.reply_message(
-                event.reply_token,
+            line_bot_api.push_message(
+                id,
                 TextSendMessage(text="こちらが最新のチャレンジになります！\n{}\n{}".format(title, url + link))
             )
         else:
-            line_bot_api.reply_message(
-                event.reply_token,
+            line_bot_api.push_message(
+                id,
                 TextSendMessage(text="{}\n{}".format(title, url + link))
             )
 
