@@ -66,7 +66,7 @@ def callback():
 
 
 def get_pgc(i):
-    html = req.get(url)
+    html = req.get(url + "/contents")
     soup = BeautifulSoup(html.content, "html.parser")
     titles = soup.find_all(class_="articleCard-title")
     links = soup.find_all(class_="articleList-item")
@@ -87,7 +87,6 @@ def send_message():
         title = title.replace(" ", "")
         if link in pgc_link_set:
             n += 1
-            name = get_company_name(url + link)
             continue
         else:
             add_pgc(link)
@@ -97,7 +96,7 @@ def send_message():
         if n == 10:
             line_bot_api.broadcast(TextSendMessage(
                 text="新しいチャレンジはありません"))
-    return None
+    return 10 - n
 
 def get_company_name(k):
     html = req.get(k)
@@ -114,4 +113,5 @@ def add_pgc(x):
 
 # ポート番号の設定
 if __name__ == "__main__":
-    send_message()
+    n = send_message()
+    print("{}件のチャレンジの案内を送信しました。")
