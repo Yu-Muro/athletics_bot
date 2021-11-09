@@ -6,8 +6,7 @@ from bs4 import BeautifulSoup
 from flask import Flask, abort, request
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import (FollowEvent, MessageEvent, TextMessage,
-                            TextSendMessage)
+from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -77,21 +76,18 @@ def get_pgc(i):
 
 
 def send_message():
-    pgc_list = session.query(PGC.url).all()
-    pgc_link_set = set()
-    for pgc in pgc_list:
-        pgc_link_set.add(pgc.url)
     n = 0
     for i in range(9, -1, -1):
         title, link = get_pgc(i)
         title = title.replace(" ", "")
-        if link in pgc_link_set:
+        pgc = session.query(PGC.url).filter(PGC.url == link).all()
+        if pgc != [] or get_pgc_status(i):
             n += 1
             continue
         else:
             add_pgc(link)
-            name = get_company_name(url + link)
-            line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n{}\n{}\n{}".format(name, title, url + link)))
+            name = get_company_name(url + link).replace(" ", "").strip()
+            line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n   {}\n \n{}\n{}".format(name, title, url + link)))
     else:
         if n == 10:
             line_bot_api.broadcast(TextSendMessage(
@@ -109,6 +105,17 @@ def add_pgc(x):
     pgc_data = PGC(url=x)
     session.add(pgc_data)
     session.commit()
+
+
+def get_pgc_status(i):
+    html = req.get(url + "/contents")
+    soup = BeautifulSoup(html.content, "html.parser")
+    status = soup.find_all(class_="articleCard-status tags")
+    status_message = status[i].text.replace(" ", "").strip()
+    if status_message == "終了":
+        return True
+    else:
+        return False
 
 
 # ポート番号の設定
