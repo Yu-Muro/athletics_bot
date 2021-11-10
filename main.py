@@ -82,6 +82,7 @@ def send_message():
         title = title.replace(" ", "")
         pgc = session.query(PGC.url).filter(PGC.url == link).all()
         if pgc != [] or get_pgc_status(i):
+            add_pgc(link)
             n += 1
             continue
         else:
@@ -121,4 +122,4 @@ def get_pgc_status(i):
 # ポート番号の設定
 if __name__ == "__main__":
     n = send_message()
-    print("{}件のチャレンジの案内を送信しました。")
+    print("{}件のチャレンジの案内を送信しました。".format(n))
