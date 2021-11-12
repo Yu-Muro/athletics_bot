@@ -81,7 +81,10 @@ def send_message():
         title, link = get_pgc(i)
         title = title.replace(" ", "")
         pgc = session.query(PGC.url).filter(PGC.url == link).all()
-        if pgc != [] or get_pgc_status(i):
+        if pgc != []:
+            n += 1
+            continue
+        elif get_pgc_status(i):
             add_pgc(link)
             n += 1
             continue
@@ -91,7 +94,7 @@ def send_message():
             pgc_type = "チャレンジ" if "challenges" in link else "イベント"
             line_bot_api.broadcast(TextSendMessage(text="新しい{}が配信されました。\n{}\n{}\n{}".format(pgc_type, name, title, URL + link)))
     else:
-        if n == 10:
+        if n == 20:
             line_bot_api.broadcast(TextSendMessage(
                 text="新しいチャレンジはありません"))
             result = "新しいチャレンジはありません"
