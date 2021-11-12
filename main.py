@@ -13,7 +13,7 @@ from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 Base = declarative_base()
-url = "https://athletix.run"
+URL = "https://athletix.run"
 
 #環境変数取得
 # LINE Developersで設定されているアクセストークンとChannel Secretをを取得し、設定します。
@@ -65,7 +65,7 @@ def callback():
 
 
 def get_pgc(i):
-    html = req.get(url + "/contents")
+    html = req.get(URL + "/contents")
     soup = BeautifulSoup(html.content, "html.parser")
     titles = soup.find_all(class_="articleCard-title")
     links = soup.find_all(class_="articleList-item")
@@ -77,7 +77,7 @@ def get_pgc(i):
 
 def send_message():
     n = 0
-    for i in range(9, -1, -1):
+    for i in range(19, -1, -1):
         title, link = get_pgc(i)
         title = title.replace(" ", "")
         pgc = session.query(PGC.url).filter(PGC.url == link).all()
@@ -87,13 +87,17 @@ def send_message():
             continue
         else:
             add_pgc(link)
-            name = get_company_name(url + link).replace(" ", "").strip()
-            line_bot_api.broadcast(TextSendMessage(text="新しいチャレンジが配信されました。\n   {}\n \n{}\n{}".format(name, title, url + link)))
+            name = get_company_name(URL + link).replace(" ", "").strip()
+            pgc_type = "チャレンジ" if "challenges" in link else "イベント"
+            line_bot_api.broadcast(TextSendMessage(text="新しい{}が配信されました。\n   {}\n \n{}\n{}".format(pgc_type, name, title, URL + link)))
     else:
         if n == 10:
             line_bot_api.broadcast(TextSendMessage(
                 text="新しいチャレンジはありません"))
-    return 10 - n
+            result = "新しいチャレンジはありません"
+        else:
+            result = "{}件のPGCが送信されました。".format(20 - n)
+    return result
 
 def get_company_name(k):
     html = req.get(k)
@@ -109,7 +113,7 @@ def add_pgc(x):
 
 
 def get_pgc_status(i):
-    html = req.get(url + "/contents")
+    html = req.get(URL + "/contents")
     soup = BeautifulSoup(html.content, "html.parser")
     status = soup.find_all(class_="articleCard-status tags")
     status_message = status[i].text.replace(" ", "").strip()
@@ -119,7 +123,6 @@ def get_pgc_status(i):
         return False
 
 
-# ポート番号の設定
 if __name__ == "__main__":
     n = send_message()
-    print("{}件のチャレンジの案内を送信しました。".format(n))
+    print(n)
