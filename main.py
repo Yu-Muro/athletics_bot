@@ -77,6 +77,7 @@ def get_pgc(i):
 
 def send_message():
     n = 0
+    result = ''
     for i in range(19, -1, -1):
         title, link = get_pgc(i)
         title = title.replace(" ", "")
