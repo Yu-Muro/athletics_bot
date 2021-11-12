@@ -1,4 +1,5 @@
 import os
+import sys
 import traceback
 
 import requests as req
@@ -137,5 +138,14 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=txt))
 
 if __name__ == "__main__":
-    n = send_message()
-    print(n)
+    i = 0
+    try:
+        i = int(sys.argv[1])
+    except:
+        pass
+    if i == 1:
+        n = send_message()
+        print(n)
+    else:
+        port = int(os.getenv("PORT", 5000))
+        app.run(host="0.0.0.0", port=port)
