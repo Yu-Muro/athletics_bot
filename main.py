@@ -82,24 +82,21 @@ def send_message():
         title = title.replace(" ", "")
         pgc = session.query(PGC.url).filter(PGC.url == link).all()
         if pgc != []:
-            n += 1
             continue
         elif get_pgc_status(i):
             add_pgc(link)
-            n += 1
             continue
         else:
             add_pgc(link)
             name = get_company_name(URL + link).replace(" ", "").strip()
             pgc_type = "チャレンジ" if "challenges" in link else "イベント"
             line_bot_api.broadcast(TextSendMessage(text="新しい{}が配信されました。\n{}\n{}\n{}".format(pgc_type, name, title, URL + link)))
+            n += 1
     else:
-        if n == 20:
-            line_bot_api.broadcast(TextSendMessage(
-                text="新しいチャレンジはありません"))
+        if n == 0:
             result = "新しいチャレンジはありません"
         else:
-            result = "{}件のPGCが送信されました。".format(20 - n)
+            result = "{}件のPGCが送信されました。".format(n)
     return result
 
 def get_company_name(k):
@@ -135,11 +132,9 @@ def get_latest_pgc():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     profile = line_bot_api.get_profile(event.source.user_id)
-    txt = get_latest_pgc()
     if "最新" in event.message.text:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=txt))
+        txt = get_latest_pgc()
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=txt))
 
 if __name__ == "__main__":
     n = send_message()
