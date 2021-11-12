@@ -74,7 +74,6 @@ def get_pgc(i):
     # print(titles[0].text) # PGCタイトル
     return titles[i].text, link
 
-
 def send_message():
     n = 0
     result = ''
@@ -90,7 +89,7 @@ def send_message():
             add_pgc(link)
             name = get_company_name(URL + link).replace(" ", "").strip()
             pgc_type = "チャレンジ" if "challenges" in link else "イベント"
-            line_bot_api.broadcast(TextSendMessage(text="新しい{}が配信されました。\n   {}\n \n{}\n{}".format(pgc_type, name, title, URL + link)))
+            line_bot_api.broadcast(TextSendMessage(text="新しい{}が配信されました。\n{}\n{}\n{}".format(pgc_type, name, title, URL + link)))
     else:
         if n == 10:
             line_bot_api.broadcast(TextSendMessage(
@@ -112,7 +111,6 @@ def add_pgc(x):
     session.add(pgc_data)
     session.commit()
 
-
 def get_pgc_status(i):
     html = req.get(URL + "/contents")
     soup = BeautifulSoup(html.content, "html.parser")
@@ -123,6 +121,22 @@ def get_pgc_status(i):
     else:
         return False
 
+def get_latest_pgc():
+    title, link = get_pgc(0)
+    title = title.replace(" ", "")
+    name = get_company_name(URL + link).replace(" ", "").strip()
+    result = "{}\n{}\n{}".format(name, title, URL + link)
+    return result
+
+
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    profile = line_bot_api.get_profile(event.source.user_id)
+    txt = get_latest_pgc()
+    if "最新" in event.message.text:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=txt))
 
 if __name__ == "__main__":
     n = send_message()
