@@ -21,7 +21,7 @@ def get_latest_pgc():
     # 最新のPGCを取得
     title, link = get_pgc(0)
     title = title.replace(" ", "")
-    name = get_company_name(URL + link).replace(" ", "").strip()
+    name = get_company_name(link).replace(" ", "").strip()
     result = {"name": name,
             "title": title,
             "url": URL + link}
