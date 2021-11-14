@@ -74,7 +74,9 @@ def handle_message(event):
         txt = "{}\n{}\n{}".format(
             latest_pgc["name"], latest_pgc["title"], latest_pgc["url"])
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=txt))
-
+    elif "常設" in event.message.text:
+        txt = pgc_manager.get_constant_pgc()
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=txt))
 
 if __name__ == "__main__":
     i = 0

@@ -60,7 +60,18 @@ def send_message():
     return result
 
 
-# ポート番号の設定
+def get_constant_pgc():
+    constants_name = ["MEETUP", "ASSIST", "TOITS"]
+    message = ""
+    for name in constants_name:
+        link = os.environ[name]
+        html = req.get(link)
+        soup = BeautifulSoup(html.content, "html.parser")
+        titles = soup.find_all(class_="detailContent-heading")
+        title = titles[0].text.replace(" ", "").strip()
+        message += "{}\n{}\n\n".format(title, link)
+    return message.rstrip()
+
+
 if __name__ == "__main__":
-    n = send_message()
-    print(n)
+    get_constant_pgc()
